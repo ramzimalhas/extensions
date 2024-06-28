@@ -11,7 +11,9 @@
     "susan_thapa",
     "mikikiv",
     "MartinGonzalez",
-    "nathanjms"
+    "nathanjms",
+    "cchalop1",
+    "hayden_barnes"
   ],
   "keywords": [
     "pomodoro",
@@ -36,6 +38,12 @@
       "subtitle": "Start / Stop Pomodoro Timer",
       "description": "Start, pause, stop or continue pomodoro intervals",
       "mode": "view"
+    },
+    {
+      "name": "stats-pomodoro-timer",
+      "title": "View Pomodoro Stats",
+      "mode": "view",
+      "description": "Shows the stats of the Pomodoro timer"
     },
     {
       "name": "slack-pomodoro-menu-bar",
@@ -409,7 +417,7 @@
     }
   ],
   "dependencies": {
-    "@raycast/api": "^1.62.0",
+    "@raycast/api": "^1.76.0",
     "@raycast/utils": "^1.12.4",
     "node-fetch": "^3.3.2"
   },

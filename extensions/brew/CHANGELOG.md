@@ -1,5 +1,24 @@
 # Brew Changelog
 
+## [Improvements] - 2024-06-24
+
+- Search now includes cask names
+
+## [Improvements] - 2024-06-24
+
+- Move formula and cask info to the metadata panel
+- Dependencies are displayed green if installed
+
+## [Improvements] - 2024-06-14
+
+- Updated dependencies
+- Updated screenshots
+- Added formula/cask name to the detail view
+
+## [Bug Fix] - 2024-05-14
+
+- Remove deprecated `--ignore-pinned` upgrade flag.
+
 ## [Bug Fix] - 2024-03-22
 
 - Fixed various crashes that occurred due to missing data.

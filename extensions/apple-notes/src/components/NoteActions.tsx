@@ -20,9 +20,10 @@ import { useState } from "react";
 
 import { NoteTitle } from "..";
 import { deleteNoteById, restoreNoteById, openNoteSeparately, getNotePlainText, getNoteBody } from "../api";
-import { fileIcon } from "../helpers";
+import { fileIcon, getOpenNoteURL } from "../helpers";
 import { NoteItem, useNotes } from "../useNotes";
 
+import AddTextForm from "./AddTextForm";
 import NoteDetail from "./NoteDetail";
 
 const preferences = getPreferenceValues<Preferences>();
@@ -103,31 +104,74 @@ export default function NoteActions({ noteTitles, note, isDeleted, isDetail, mut
       />
       {secondaryOpen}
 
-      {noteTitles ? <RelatedNotes noteTitles={noteTitles} note={note} /> : null}
+      <ActionPanel.Section>
+        <Action.Push
+          title="Add Text to Note"
+          icon={Icon.Plus}
+          shortcut={{ modifiers: ["cmd", "shift"], key: "a" }}
+          target={<AddTextForm noteId={note.id} />}
+        />
 
-      {isDeleted ? (
-        <Action
-          title="Restore to Notes Folder"
-          icon={Icon.ArrowCounterClockwise}
-          onAction={restoreNote}
-          shortcut={{ modifiers: ["cmd", "shift"], key: "r" }}
-        />
-      ) : (
-        <Action
-          title="Delete Note"
-          icon={Icon.Trash}
-          style={Action.Style.Destructive}
-          onAction={deleteNote}
-          shortcut={Keyboard.Shortcut.Common.Remove}
-        />
-      )}
+        {note.links.length > 0 ? (
+          <ActionPanel.Submenu title="Open Links" icon={Icon.Link} shortcut={{ modifiers: ["cmd", "shift"], key: "l" }}>
+            {note.links.map((link) => {
+              if (link.url && link.text) {
+                return (
+                  <Action.Open
+                    key={link.id}
+                    title={link.text}
+                    target={link.url}
+                    icon={isDeleted ? { source: Icon.Trash, tintColor: Color.SecondaryText } : "notes-icon.png"}
+                  />
+                );
+              }
+            })}
+          </ActionPanel.Submenu>
+        ) : null}
+
+        {note.backlinks.length > 0 ? (
+          <ActionPanel.Submenu
+            title="Open Backlinks"
+            icon={Icon.ArrowNe}
+            shortcut={{ modifiers: ["cmd", "shift"], key: "b" }}
+          >
+            {note.backlinks.map((backlink) => (
+              <Action.Open
+                key={backlink.id}
+                title={backlink.title}
+                target={backlink.url}
+                icon={isDeleted ? { source: Icon.Trash, tintColor: Color.SecondaryText } : "notes-icon.png"}
+              />
+            ))}
+          </ActionPanel.Submenu>
+        ) : null}
+
+        {noteTitles ? <RelatedNotes noteTitles={noteTitles} note={note} /> : null}
+
+        {isDeleted ? (
+          <Action
+            title="Restore to Notes Folder"
+            icon={Icon.ArrowCounterClockwise}
+            onAction={restoreNote}
+            shortcut={{ modifiers: ["cmd", "shift"], key: "r" }}
+          />
+        ) : (
+          <Action
+            title="Delete Note"
+            icon={Icon.Trash}
+            style={Action.Style.Destructive}
+            onAction={deleteNote}
+            shortcut={Keyboard.Shortcut.Common.Remove}
+          />
+        )}
+      </ActionPanel.Section>
 
       <ActionPanel.Section>
         <Action.CopyToClipboard
           title="Copy Note URL"
           content={{
-            html: `<a href="applenotes://showNote?identifier=${note.UUID}" title="${note.title}">${note.title}</a>`,
-            text: `applenotes://showNote?identifier=${note.UUID}`,
+            html: `<a href=${getOpenNoteURL(note.UUID)} title="${note.title}">${note.title}</a>`,
+            text: getOpenNoteURL(note.UUID),
           }}
           shortcut={Keyboard.Shortcut.Common.Copy}
         />
@@ -225,7 +269,7 @@ function OpenNoteAction({ note, separately, shortcut }: OpenNoteActionProps) {
     return (
       <Action.Open
         title="Open in Notes"
-        target={`applenotes://showNote?identifier=${note.UUID}`}
+        target={getOpenNoteURL(note.UUID)}
         icon={{ fileIcon }}
         application="com.apple.notes"
         shortcut={shortcut}
@@ -295,7 +339,7 @@ Only return a minified JSON array that is parsable, nothing else. Try to find be
             <Action.Open
               key={note.uuid}
               title={note.title}
-              target={`applenotes://showNote?identifier=${note.uuid}`}
+              target={getOpenNoteURL(note.uuid)}
               icon={{ fileIcon }}
               application="com.apple.notes"
             />
